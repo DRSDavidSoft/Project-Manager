@@ -1,0 +1,181 @@
+html {
+	-ms-touch-action: manipulation;
+	touch-action: manipulation;
+}
+html, body {
+	margin: 0; padding: 0;
+	width: 100%; min-height: 100%;
+	box-sizing: border-box;
+	display: block;
+}
+* {
+	box-sizing: border-box;
+}
+body {
+	font-family: 'Roboto', 'proxima-nova', 'iransans-web', 'Roboto', sans-serif;
+	color: black;
+	font-weight: 300;
+}
+persian {
+	display: inline-block;
+	direction: rtl;
+}
+header {
+	display: block;
+	position: relative;
+	width: 100%;
+	margin: auto;
+}
+header.main {
+	height: 216px;
+	padding: auto;
+}
+header.main .intro .wrapper {
+	padding: 0 20px;
+}
+.navbar {
+	position: relative;
+	display: block;
+	top: 0; left: 0;
+	width: 100%;
+	height: 32px;
+	min-height: 32px;
+	margin-bottom: 0;
+}
+.wrapper-box {
+	display: block;
+	position: relative;
+	max-width: 800px;
+	width: 100%;
+	margin: 0 auto;
+	overflow: auto;
+}
+.container-box {
+	max-width: 600px;
+	margin: 0 auto;
+	padding: 80px 0;
+	min-height: 400px;
+	text-align: center;
+}
+
+/*
+form {
+	padding: 20px 0;
+	position: relative;
+	z-index: 2;
+}
+form input {
+	-webkit-appearance: none;
+	 -moz-appearance: none;
+			appearance: none;
+	outline: 0;
+	border: 1px solid rgba(255, 255, 255, 0.4);
+	background-color: rgba(255, 255, 255, 0.2);
+	width: 250px;
+	border-radius: 3px;
+	padding: 10px 15px;
+	margin: 0 auto 10px auto;
+	display: block;
+	text-align: center;
+	font-size: 18px;
+	color: white;
+	-webkit-transition-duration: 0.25s;
+			transition-duration: 0.25s;
+	font-weight: 300;
+}
+form input:hover {
+	background-color: rgba(255, 255, 255, 0.4);
+}
+form input:focus {
+	background-color: white;
+	width: 300px;
+	color: #53e3a6;
+}
+*/
+
+button, .btn {
+	-webkit-appearance: none;
+	   -moz-appearance: none;
+			appearance: none;
+	outline: 0 !important;
+	cursor: pointer;
+	-webkit-transition-duration: 0.01s;
+			transition-duration: 0.01s;
+	position: relative;
+}
+.btn .btn-main {
+	background-color: white;
+	border: 0;
+	padding: 10px 15px;
+	color: #53e3a6;
+	border-radius: 3px;
+	width: 250px;
+	font-size: 18px;
+}
+
+form button:hover {
+	background-color: #f5f7f9;
+}
+button.main, .btn-main {
+	outline: 0;
+	border: 0;
+	width: 90%;
+	min-height: 48px;
+	margin: 16px auto;
+	font-size: 100%;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 1px;
+}
+
+
+.btn-outline, .btn-outline:focus {
+	background: transparent;
+	border-radius: 1px;
+	border: 2px solid white;
+	color: white;
+	padding: 6px 20px;
+	outline: 0 !important;
+	letter-spacing: 1px;
+	text-transform: titlecase;
+	box-shadow: none !important;
+	transition: all .3s ease;
+}
+
+.btn-outline:hover, .btn-outline.active {
+	background: white;
+	color: #39A0ED;
+}
+
+.btn-outline:focus {
+	opacity: 1;
+}
+
+.btn-outline:active {
+	box-shadow: none;
+	background: white;
+	color: #39A0ED;
+	opacity: 1;
+}
+
+.btn-outline.disabled, .btn-outline[disabled] {
+	background: transparent;
+	color: white;
+}
+
+.btn-outline.active.disabled, .btn-outline.active[disabled] {
+	background: white;
+	color: #39A0ED;
+}
+
+.btn-rounded {
+	border-radius: 30px;
+}
+
+.btn-square {
+	border-radius: 1px !important;
+}
+
+.float-bottom {
+	
+}

@@ -1,0 +1,62 @@
+@font-face {
+    font-family: IRANSans-web;
+    src: url(./IRANSans-Bold-web.eot);
+    src: url(./IRANSans-Bold-web.eot?#iefix) format("eot"),url(./IRANSans-Bold-web.woff2) format("woff2"),url(./IRANSans-Bold-web.woff) format("woff"),url(./IRANSans-Bold-web.ttf) format("ttf");
+    font-weight: 700
+}
+
+@font-face {
+    font-family: IRANSans-web;
+    src: url(./IRANSans-Medium-web.eot);
+    src: url(./IRANSans-Medium-web.eot?#iefix) format("eot"),url(./IRANSans-Medium-web.woff2) format("woff2"),url(./IRANSans-Medium-web.woff) format("woff"),url(./IRANSans-Medium-web.ttf) format("ttf");
+    font-weight: 500
+}
+
+@font-face {
+    font-family: IRANSans-web;
+    src: url(./IRANSans-UltraLight-web.eot);
+    src: url(./IRANSans-UltraLight-web.eot?#iefix) format("eot"),url(./IRANSans-UltraLight-web.woff2) format("woff2"),url(./IRANSans-UltraLight-web.woff) format("woff"),url(./IRANSans-UltraLight-web.ttf) format("ttf");
+    font-weight: 200
+}
+
+@font-face {
+    font-family: IRANSans-web;
+    src: url(./IRANSans-Light-web.eot);
+    src: url(./IRANSans-Light-web.eot?#iefix) format("eot"),url(./IRANSans-Light-web.woff2) format("woff2"),url(./IRANSans-Light-web.woff) format("woff"),url(./IRANSans-Light-web.ttf) format("ttf");
+    font-weight: 300
+}
+
+@font-face {
+    font-family: IRANSans-web;
+    src: url(./IRANSans-web.eot);
+    src: url(./IRANSans-web.eot?#iefix) format("eot"),url(./IRANSans-web.woff2) format("woff2"),url(./IRANSans-web.woff) format("woff"),url(./IRANSans-web.ttf) format("ttf");
+    font-weight: 400
+}
+
+@font-face {
+    font-family: IRAN-web;
+    src: url(./IRANBold.eot);
+    src: url(./IRANBold.eot?#iefix) format("eot"),url(./IRANBold.woff2) format("woff2"),url(./IRANBold.woff) format("woff"),url(./IRANBold.ttf) format("ttf");
+    font-weight: 700
+}
+
+@font-face {
+    font-family: IRAN-web;
+    src: url(./IRAN_SemiBold.eot);
+    src: url(./IRAN_SemiBold.eot?#iefix) format("eot"),url(./IRAN_SemiBold.woff2) format("woff2"),url(./IRAN_SemiBold.woff) format("woff"),url(./IRAN_SemiBold.ttf) format("ttf");
+    font-weight: 600
+}
+
+@font-face {
+    font-family: IRAN-web;
+    src: url(./IRANBlack.eot);
+    src: url(./IRANBlack.eot?#iefix) format("eot"),url(./IRANBlack.woff2) format("woff2"),url(./IRANBlack.woff) format("woff"),url(./IRANBlack.ttf) format("ttf");
+    font-weight: 900
+}
+
+@font-face {
+    font-family: IRAN-web;
+    src: url(./IRAN.eot);
+    src: url(./IRAN.eot?#iefix) format("eot"),url(./IRAN.woff2) format("woff2"),url(./IRAN.woff) format("woff"),url(./IRAN.ttf) format("ttf");
+    font-weight: 400
+}

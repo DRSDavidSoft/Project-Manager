@@ -1,0 +1,34 @@
+
+Project Manager
+Author: David Refoua
+Website: www.dADroid.ir
+         www.Refoua.me
+--------------------------------
+
++ New Feature, major improvement
+! Modified, likely incompatible
+* Fixed, minor improvement
+- Removed, deprecated
+
+Changelog:
+
+v0.3
+* Clean-up for GitHub release
+  
+v0.2
+  Initial Beta Stage
+
+
+v0.1
+  Initial Beta Stage
+
+
+
+v0.0.1
+  Initial Beta Stage
++ Logic is created
++ Database initial layout is created
+
+v0.0
+  Initial Beta Stage
+- Nothing works
