@@ -1,11 +1,11 @@
 
 # Project-Manager
-A web-based complete project management solution.
-Demo: http://refoua.me/project-manager/page/list
-(Demo will be removed in May 2017)
+A web-based complete project management solution.<br />
+Temp Demo: http://refoua.me/project-manager/page/list<br />
 
 
-![Project Manager](https://i.imgur.com/BTc51vlm.png)
+![Project Manager](https://i.imgur.com/BTc51vlm.png)<br />
+https://www.devrant.io/rants/547895/
 
 This project is currently at the beta stage, almost all of the files need to be re-written.
 * For the guide regarding the installation, please read [INSTALL.md](INSTALL.md).
