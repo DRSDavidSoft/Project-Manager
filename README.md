@@ -7,6 +7,10 @@ Temp Demo: http://refoua.me/project-manager/page/list<br />
 ![Project Manager](https://i.imgur.com/BTc51vlm.png)<br />
 https://www.devrant.io/rants/547895/
 
+Add your current tasks and organize them.
+
+A Project Management app to help organize, prioritize and store details and resources about your projects and TODOs.
+
 This project is currently at the beta stage, almost all of the files need to be re-written.
 * For the guide regarding the installation, please read [INSTALL.md](INSTALL.md).
 * Before any contribution, please read [CONTRIBUTING.md](CONTRIBUTING.md).
