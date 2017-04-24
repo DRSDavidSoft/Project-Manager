@@ -6,6 +6,9 @@
 3. In the `index.php` file, edit the 14th and 15th file to reflect your MySQL/MariaDB authentication and table name.
 4. Navigate to `http://localhost/project-manager/list` to open the app.
 
+#### After a successful installation, you should have a page similiar to this:
+http://refoua.me/project-manager/page/list
+
 At the moment, you can access the `list` and the `edit` page by typing the URLS:
 - `http://localhost/project-manager/list`
 - `http://localhost/project-manager/edit`
