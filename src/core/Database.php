@@ -3,7 +3,7 @@
 	/**
 	 * File: Database.php
 	 * Author: David@Refoua.me
-	 * Version: 0.5.2
+	 * Version: 0.5.3
 	 */
 	 
 	if ( basename($_SERVER['PHP_SELF']) == basename(__FILE__) ) {
@@ -370,7 +370,7 @@
 		$output = preg_replace( '|\s+|', '_', $output );
 		
 		// Remove all non-alphanumeric and underscore characters
-		$output = preg_replace( '|\W+|', '', $output );
+		$output = preg_replace( '|[^\w\-]+|', '', $output );
 		
 		// Check if the value should be an integer
 		if ( !preg_match( '|^[\d\-\.\+\ \,]+$|', $output ) )
