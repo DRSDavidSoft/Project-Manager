@@ -1,6 +1,8 @@
 
 # Project-Manager
 A web-based complete project management solution.
+Demo: http://refoua.me/project-manager/page/list
+(Demo will be removed in May 2017)
 
 
 ![Project Manager](https://i.imgur.com/BTc51vlm.png)
