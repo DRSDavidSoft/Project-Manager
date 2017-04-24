@@ -3,7 +3,7 @@
 	/**
 	 * File: Request.php
 	 * Author: David@Refoua.me
-	 * Version: 0.3
+	 * Version: 0.4
 	 */
 	
 	// AUTHOR'S NOTE:
@@ -88,8 +88,8 @@
 	
 	$i = 0;
 	foreach ( $argNames as $node ) if ( !empty($keys[$i]) ) $parameters[$node] = urldecode($keys[$i++]);
-	foreach ( $_REQUEST as $name=>$node ) { $parameters [/*strtolower*/($name)] = $node; }
-	$_REQUEST = array_merge($_REQUEST, $parameters);
+	//foreach ( $_REQUEST as $name=>$node ) { $parameters [/*strtolower*/($name)] = $node; }
+	//$_REQUEST = array_merge($_REQUEST, $parameters);
 	
 	if ( empty($callpath) ) $callpath = implode('/', $path);
 	$callpath = trim( $callpath, '/' );

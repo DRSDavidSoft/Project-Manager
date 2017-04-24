@@ -1,20 +1,8 @@
 <?php
 
-	# Hold page data
-	$page = [];
-	
 	$page ['app_title']= 'TODO Manager';
 	$page ['page_title']= 'Projects';
 	$page ['page_description']= 'Manage a list of your projects here.';
-	
-	# Include the required files
-	$ROOT_DIR = "I:\HTML Projects\My Scripts\dADroid";
-	require_once realpath( $ROOT_DIR . '/loader.php' );
-	include $ROOT_DIR . '/.work_space/_kint/Kint.class.php';
-
-	# Make a MySQL Database connection
-	$db = dbInit( "mysql:host=localhost;port=3306;charset=utf8", null, 'main', 'letmein' );
-	dbSelect( $db, 'todo_manager', true );
 	
 	# Mark start time
 	$startTime = microtime(true);

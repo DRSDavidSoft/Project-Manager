@@ -11,8 +11,8 @@
 	if ( realpath( $Kint = $ROOT_DIR . '/.work_space/_kint/Kint.class.php' ) ) include $Kint;
 
 	# Make a MySQL Database connection
-	$db = dbInit( "mysql:host=localhost;port=3306;charset=utf8", null, 'main', 'letmein' );
-	dbSelect( $db, 'todo_manager', true );
+	$db = dbInit( "mysql:host=localhost;port=3306;charset=utf8", null, 'main', 'letmein' ); // DSN, leave null, username, password
+	dbSelect( $db, 'todo_manager', true ); // Database Name
 	
 	$modules = [
 		'test' => function($args) {
@@ -29,13 +29,13 @@
 				# Hold page data
 				$page = [];
 			
-				$name = array_pop($args);
+				$name = array_shift($args);
 				// +d($name, $args);
 				
 				if ( realpath( $file = __DIR__ . '/pages/' . $name . '.php' ) ) require $file;
 				else list($success, $msg, $result) = [ false, 'Page not found', basename($file) ];
 				
-				if ( empty($page) ) list($success, $msg, $result) = [ false, 'Page data empty', basename($file) ];
+				if ( empty($page) ) list($success, $msg, $result) = [ false, 'Page data empty (create issue on GitHub)', basename($file) ];
 				else { exit(); }
 			
 				return [$success, $msg, $result];
