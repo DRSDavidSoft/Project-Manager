@@ -3,7 +3,7 @@
 	/**
 	 * File: Database.php
 	 * Author: David@Refoua.me
-	 * Version: 0.5.3
+	 * Version: 0.5.4
 	 */
 	 
 	if ( basename($_SERVER['PHP_SELF']) == basename(__FILE__) ) {
@@ -51,10 +51,10 @@
 		$db_name = sanitizeName($db_name);
 		
 		// Check if the specified Database exist
-		if ( !$create ) $db->exec("USE $db_name;");
+		if ( !$create ) $db->exec("USE `$db_name`;");
 		
 		// Make sure that we have write access and database actually exists
-		$db->exec("CREATE DATABASE IF NOT EXISTS $db_name; USE $db_name;");
+		$db->exec("CREATE DATABASE IF NOT EXISTS `$db_name`; USE `$db_name`;");
 		
 		// Set the default encoding to UTF-8
 		$db->exec('set names utf8');
