@@ -1,9 +1,9 @@
-﻿<?php
+<?php
 
 	/**
 	 * File: Database.php
 	 * Author: David@Refoua.me
-	 * Version: 0.5.4
+	 * Version: 0.6.0
 	 */
 	 
 	if ( basename($_SERVER['PHP_SELF']) == basename(__FILE__) ) {
@@ -20,7 +20,7 @@
 	// TODO: __commentme__
 	// TODO: move $db_name after $db_password, also add $PDO_options
 	function dbInit($dsn, $db_name = null, $db_username = null, $db_password = null) {
-
+	
 		try {
 			$db = new PDO($dsn, $db_username, $db_password, [
 				PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
@@ -65,6 +65,8 @@
 	
 	function formatSQL( $sql ) {
 		
+		global $db;
+		
 		// First, trim any useless spaces
 		$sql = trim( preg_replace( '|\s+|', ' ', $sql ) );
 		
@@ -79,6 +81,27 @@
 		
 		// Remove additional white-spaces and keep only one semicolon 
 		$sql = trim( trim($sql), ';' ) . ';';
+		
+		// Check for server-specific corrections
+		$dbDriver = $db->getAttribute(PDO::ATTR_DRIVER_NAME);
+		
+		// Microsoft SQL Server based queries
+		if ( in_array($dbDriver, ['sqlsrv', 'mssql', 'dblib']) ) {
+			
+			// Change the "`..`" format to "[...]" format
+			$sql = preg_replace( '|\`([^\`]+)\`|iU', '[\1]', $sql );
+			
+			// Change "LIMIT n" to "TOP n" format
+			$sql = preg_replace_callback( '@(?:^|;)(?<clause>\w+)\s+(?<parameters>[^\;]+)\s+LIMIT (?<limit>\w+)\;@iU',
+				function($section) { return "${section['clause']} TOP ${section['limit']} ${section['parameters']}"; }
+			, $sql );
+			
+			// Remove additional white-spaces and keep only one semicolon 
+			$sql = trim( trim($sql), ';' ) . ';';
+			
+		}
+		
+		//echo $sql; exit;
 		
 		return $sql;
 		
@@ -105,7 +128,7 @@
 			$values  = array_fill( 0, count($data), '?' );
 			$post    = array_values($data);
 		} else {
-			die("Not supported yet"); // TODO: for any array like array( 3=>'third row', 5=>'fifth row' )
+			die("Database.php: Not supported yet!"); // TODO: for any array like array( 3=>'third row', 5=>'fifth row' )
 		}
 		
 		/*
@@ -246,6 +269,8 @@
 		}
 	}
 	
+	// NOTE: $count returns how many updated with new data in MySQL, and how many totally affected in MSSQL
+	
 	function dbWrite( $table, $filters = [], $data ) {
 		GLOBAL $db;
 		
@@ -260,7 +285,8 @@
 			$stmt    = $db->prepare( formatSQL($sql) );
 			$success = $stmt->execute( $post );
 			$count   = $stmt->rowCount();
-			return $success;
+	
+			return ($success ? $count : FALSE);
 		}
 		
 	}
@@ -277,6 +303,7 @@
 			$stmt    = $db->prepare( formatSQL($sql) );
 			$success = $stmt->execute( array_values($filters) );
 			$count   = $stmt->rowCount();
+			
 			return $success;
 		}
 		
