@@ -29,7 +29,7 @@
 				# Hold page data
 				$page = [];
 			
-				$name = array_shift($args);
+				$name = $args['arg']; // array_shift($args);
 				// +d($name, $args);
 				
 				if ( realpath( $file = __DIR__ . '/pages/' . $name . '.php' ) ) require $file;
