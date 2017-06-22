@@ -3,7 +3,7 @@
 	/**
 	 * File: Request.php
 	 * Author: David@Refoua.me
-	 * Version: 0.4
+	 * Version: 0.4.2
 	 */
 	
 	// AUTHOR'S NOTE:
@@ -58,7 +58,13 @@
 	
 	if (empty($modules)) $modules = [];
 	
-	$argNames = explode(':', 'arg:term:info_hash:id:example');
+	//'arg:term:info_hash:id:example'
+
+	if ( empty($argNames) || empty($modules) ) {
+		echo ("\n<br><b>ERROR:</b> Please make sure that argNames and modules are defined.<br>\n");
+	}
+
+	$argNames = is_string($argNames) ? explode(':', $argNames) : $argNames;
 	$modules = array_merge($modules, [
 		// Make sure all module names are small-letters
 		
