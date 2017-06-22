@@ -5,7 +5,7 @@ Temp Demo: http://refoua.me/project-manager/page/list<br />
 
 
 ![Project Manager](https://i.imgur.com/BTc51vlm.png)<br />
-https://www.devrant.io/rants/547895/
+https://www.devrant.io/rants/532781/
 
 Add your current tasks and organize them.
 
