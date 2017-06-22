@@ -2,7 +2,7 @@
 	
 	# Application Name and Version
 	define ('APP_NAME', 'Project Manager');
-	define ('VERSION',  '0.3.0b1-dev');
+	define ('VERSION',  '0.3.0b2-dev');
 	define ('AUTHOR', 'DRSDavidSoft');
 	
 	# Include the required files
@@ -29,7 +29,7 @@
 				# Hold page data
 				$page = [];
 			
-				$name = $args['arg']; // array_shift($args);
+				$name = $args['page']; // array_shift($args);
 				// +d($name, $args);
 				
 				if ( realpath( $file = __DIR__ . '/pages/' . $name . '.php' ) ) require $file;
@@ -41,6 +41,8 @@
 				return [$success, $msg, $result];
 			}
 	];
+
+	$argNames = 'page:id';
 	
 	require realpath( $ROOT_DIR . '/core/Request.php' );
 	return;
