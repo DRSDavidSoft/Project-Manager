@@ -32,17 +32,45 @@
 				$name = $args['page']; // array_shift($args);
 				// +d($name, $args);
 				
-				if ( realpath( $file = __DIR__ . '/pages/' . $name . '.php' ) ) require $file;
-				else list($success, $msg, $result) = [ false, 'Page not found', basename($file) ];
+				if ( is_dir( $dir = __DIR__ . '/pages/' . $name . '/' ) ) {
+					
+					$name = $args['id'];
+					$args['id'] = $args['subpage'];
+					unset($args['subpage']);
+					
+					if ( is_file( $file = $dir . $name . '.php' ) ) require $file;
+					else list($success, $msg, $result) = [ false, 'Page not found', basename($file) ];
+					
+				}
 				
-				if ( empty($page) ) list($success, $msg, $result) = [ false, 'Page data empty (create issue on GitHub)', basename($file) ];
+				else 
+				{
+					if ( is_file( $file = __DIR__ . '/pages/' . $name . '.php' ) ) require $file;
+					else list($success, $msg, $result) = [ false, 'Page not found', basename($file) ];
+				}
+				
+				if ( empty($page) ) list($success, $msg, $result) = [ false, 'Page data empty (report to David@Refoua.me)', basename($file) ];
 				else { exit(); }
+			
+				return [$success, $msg, $result];
+			},
+		'action' => function($args) {
+				global $parameters, $work_space;
+				
+				# Hold page data
+				$page = [];
+			
+				$name = $args['page']; // array_shift($args);
+				// +d($name, $args);
+				
+				if ( realpath( $file = __DIR__ . '/actions/' . $name . '.php' ) ) require $file;
+				else list($success, $msg, $result) = [ false, 'Action not found', basename($file) ];
 			
 				return [$success, $msg, $result];
 			}
 	];
 
-	$argNames = 'page:id';
+	$argNames = 'page:id:subpage';
 	
 	require realpath( $ROOT_DIR . '/core/Request.php' );
 	return;
