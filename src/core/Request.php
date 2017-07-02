@@ -3,7 +3,7 @@
 	/**
 	 * File: Request.php
 	 * Author: David@Refoua.me
-	 * Version: 0.4.2
+	 * Version: 0.4.3
 	 */
 	
 	// AUTHOR'S NOTE:
@@ -35,6 +35,14 @@
 
 		return $d;
 	}
+
+	$requestHeaders = getallheaders();
+	$requestMethod = $_SERVER['REQUEST_METHOD'];
+	// $requestBody = file_get_contents('php://input');
+
+	foreach ( $requestHeaders as $name=>$value ) {
+		$requestHeaders_small[ strtolower($name) ] = trim($value);
+	}
 	
 	$findLoc = strlen(trim(@$_SERVER['PATH_INFO'])) == 0 ? FALSE : strpos( trim(urldecode($_SERVER['REQUEST_URI'])), trim(urldecode($_SERVER['PATH_INFO'])) );
 	$dir = substr( trim($_SERVER['REQUEST_URI']), 0, $findLoc !== FALSE ? $findLoc : strlen($_SERVER['REQUEST_URI']) );
@@ -47,6 +55,19 @@
 	$request = array_merge( parse_url($url), parse_url($uri) );
 	//$parameters = $_REQUEST;
 	$keys = [];
+
+	$scheme = (
+		(@$_SERVER['REQUEST_SCHEME'] == 'https') ||
+		(@$_SERVER['HTTPS'] == 'on') ||
+		(@$_SERVER['SERVER_PORT'] == '443')
+	) ? 'https' : 'http';
+
+	$port = $_SERVER['SERVER_PORT'];
+	if ( in_array($port, [80, 443]) ) $port = false;
+
+	define('HOST_URL', $scheme . '://' . $server . (empty($port) ? '' : ":" . $port) . '/');
+
+	define('FULL_URL', rtrim(HOST_URL, '/') . $url );
 	
 	$parameters = array_merge( $_GET, $_POST ); // Do not use $_REQUEST because it contains cookies
 	//var_dump($parameters); exit;
@@ -122,6 +143,17 @@
 		header ( "Location: $dir$redirect", true, 301 );
 		exit( "This API has moved to: \n$dir$redirect" );
 	}
+
+	/*
+
+	// TODO: Use alongside $success, $message, $content
+	if ( !empty($redirect) ) {
+		header ("Location: $WWW_DIR$redirect", true, 302);
+		header ("Content-type: text/plain");
+		exit( "Redirecting to: $WWW_DIR$redirect" );
+	}
+
+	*/
 	
 	$success = !empty($success);
 	if ( $success == true ) $code = 200;
