@@ -2,6 +2,7 @@
 # Project-Manager
 A web-based complete project management solution.<br />
 Temp Demo: http://refoua.me/project-manager/page/list<br />
+Functional UI: http://refoua.me/project-manager/page/edit?id=27<br />
 
 
 ![Project Manager](https://i.imgur.com/BTc51vlm.png)<br />
