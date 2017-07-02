@@ -213,6 +213,12 @@
 	// SELECT * FROM Orders LIMIT 5,10;  # Retrieve rows 6-15
 	// LIMIT row_count is equivalent to LIMIT 0, row_count.
 	
+	// TODO: COUNT(*)
+	// https://stackoverflow.com/a/1893431/1454514
+	// function dbCount( $table, $filters = [] ) {
+	// 		return $count;
+	// }
+	
 	// TODO: ORDER BY
 	// SELECT column_name FROM Orders WHERE condition ORDER BY col1 ASC, col2 DESC
 	// SELECT * FROM CUSTOMERS ORDER BY NAME, SALARY;
