@@ -3,7 +3,7 @@
 	/**
 	 * File: Database.php
 	 * Author: David@Refoua.me
-	 * Version: 0.6.0
+	 * Version: 0.6.1
 	 */
 	 
 	if ( basename($_SERVER['PHP_SELF']) == basename(__FILE__) ) {
@@ -60,6 +60,33 @@
 		$db->exec('set names utf8');
 		
 		return $db;
+		
+	}
+	
+	/** Deprecated, all of these methods will be replaced by OOP class ASAP. */
+	function useHandle( $dbHandle ) {
+		
+		global $db, $dbLast;
+		
+		if ( ($dbHandle instanceof PDO) === true ) {
+			list($db, $dbLast) = array($dbHandle, $db);
+			
+			return true;
+		}
+		
+		return false;
+		
+	}
+	
+	function getHandle() {
+		
+		global $db;
+		
+		if ( ($db instanceof PDO) === true ) {
+			return $db;
+		}
+		
+		return null;
 		
 	}
 	
@@ -243,6 +270,36 @@
 			$success = $stmt->execute( array_values($filters) );
 			$result  = $stmt->fetchAll( PDO::FETCH_ASSOC );
 			$count   = $stmt->rowCount();
+			return $result;
+		}
+		
+	}
+	
+	function dbPrepare( $table, $filters = [], $limit = INF ) {
+		GLOBAL $db;
+		
+		$limit   = sanitizeInt   ( $limit );
+		$table   = sanitizeName  ( $table );
+		//$filters = sanitizeArray ( $filters );
+		
+		if ( ($db instanceof PDO) === true ) {
+			$fields  = '*'; // TODO: For now, everything. To be changed later.
+			//$where   = implode(' AND ', array_set("`*` = ?", array_keys($filters)));
+			$where   = buildWhere( $filters );
+			$sql     = ("SELECT $fields FROM `$table` WHERE ($where) LIMIT $limit");
+			$stmt    = $db->prepare( formatSQL($sql) );
+			$success = $stmt->execute( array_values($filters) );
+			$count   = $stmt->rowCount();
+			return $stmt;
+		}
+		
+	}
+	
+	function dbFetch( $stmt ) {
+		GLOBAL $db;
+		
+		if ( ($db instanceof PDO) === true ) {
+			$result  = $stmt->fetch( PDO::FETCH_ASSOC );
 			return $result;
 		}
 		
