@@ -3,7 +3,7 @@
 	/**
 	 * File: Database.php
 	 * Author: David@Refoua.me
-	 * Version: 0.6.1
+	 * Version: 0.6.2
 	 */
 	 
 	if ( basename($_SERVER['PHP_SELF']) == basename(__FILE__) ) {
@@ -20,6 +20,9 @@
 	// TODO: __commentme__
 	// TODO: move $db_name after $db_password, also add $PDO_options
 	function dbInit($dsn, $db_name = null, $db_username = null, $db_password = null) {
+		
+		// Remove all whitespace, tabs and newlines
+		$dsn = preg_replace( '|\s+|', '', $dsn );
 	
 		try {
 			$db = new PDO($dsn, $db_username, $db_password, [
