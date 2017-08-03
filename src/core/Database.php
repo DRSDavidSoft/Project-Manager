@@ -3,7 +3,7 @@
 	/**
 	 * File: Database.php
 	 * Author: David@Refoua.me
-	 * Version: 0.6.2
+	 * Version: 0.6.3
 	 */
 	 
 	if ( basename($_SERVER['PHP_SELF']) == basename(__FILE__) ) {
@@ -33,6 +33,11 @@
 			// $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 			
 			if ( !empty($db_name) ) dbSelect($db, $db_name);
+			
+			// Make sure the `set names utf8` is executed even if the DB name is not passed as an argument,
+			// however it should only be executed on MySQL servers. Executing it on a MSSQL server returns an error.
+			else try {$db->exec('set names utf8');} catch(PDOException $nothing) {}
+			
 		}
 
 		catch( PDOException $e ) {
