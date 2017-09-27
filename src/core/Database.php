@@ -3,7 +3,7 @@
 	/**
 	 * File: Database.php
 	 * Author: David@Refoua.me
-	 * Version: 0.6.3
+	 * Version: 0.6.4
 	 */
 	 
 	if ( basename($_SERVER['PHP_SELF']) == basename(__FILE__) ) {
@@ -30,7 +30,7 @@
 				PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
 			]);
 			
-			// $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+			$db->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
 			
 			if ( !empty($db_name) ) dbSelect($db, $db_name);
 			
@@ -378,6 +378,35 @@
 			return $success;
 		}
 		
+	}
+
+	// if ( ($db instanceof PDO) === true ) { ... }
+
+	function dbTransaction() {
+		GLOBAL $db;
+
+		if ( !$db->inTransaction() )
+			return $db->beginTransaction();
+
+		else return false;
+	}
+
+	function dbCommit() {
+		GLOBAL $db;
+
+		if ( $db->inTransaction() )
+			return $db->commit();
+
+		else return false;
+	}
+
+	function dbRollback() {
+		GLOBAL $db;
+
+		if ( $db->inTransaction() )
+			return $db->rollBack();
+
+		else return false;
 	}
 	
 	function array_build( $glue, $array ) {
