@@ -3,7 +3,7 @@
 	/**
 	 * File: Webpage.php
 	 * Author: David@Refoua.me
-	 * Version: 0.1.0
+	 * Version: 0.1.1
 	 */
 	
 
@@ -45,24 +45,33 @@
 			
 		}
 		
+		public $sortEnabled = true;
+		
 		private function sortHead() {
+			
+			if ( empty($sortEnabled) ) return;
 			
 			$head = $this->loadElement( $this->doc, 'head' ); $nodes = [];
 			while ($head->hasChildNodes()) $nodes []= $head->removeChild($head->firstChild);
 			
 			function elScore( $el, $score = 0 ) {
-				if ( $el->hasAttribute('charset') == 'title' )  $score += 1000 - 10;
-				if ( $el->getAttribute('name') == 'viewport' )  $score += 1000 - 20;
-				if ( stripos( trim($el->getAttribute('http-equiv')), trim('X-UA-Compatible') ) === 0 )  $score += 1000 - 30;
 				
-				if ( $el->tagName == 'title' )  $score += 2000 - 10;
-				if ( $el->tagName == 'base' )   $score += 2000 - 20;
-				if ( $el->tagName == 'meta' )   $score += 2000 - 30;
-				if ( $el->tagName == 'link' )   $score += 2000 - 40;
-				
-				
-				if ( $el->tagName == 'script' ) $score += 1000 - 80;
-				if ( $el->tagName == 'style' )  $score += 1000 - 90;
+				if ( $el instanceof DOMElement ) { // and not DOMComment
+					
+					if ( $el->hasAttribute('charset') == 'title' )  $score += 1000 - 10;
+					if ( $el->getAttribute('name') == 'viewport' )  $score += 1000 - 20;
+					if ( stripos( trim($el->getAttribute('http-equiv')), trim('X-UA-Compatible') ) === 0 )  $score += 1000 - 30;
+					
+					if ( $el->tagName == 'title' )  $score += 2000 - 10;
+					if ( $el->tagName == 'base' )   $score += 2000 - 20;
+					if ( $el->tagName == 'meta' )   $score += 2000 - 30;
+					if ( $el->tagName == 'link' )   $score += 2000 - 40;
+					
+					
+					if ( $el->tagName == 'script' ) $score += 1000 - 80;
+					if ( $el->tagName == 'style' )  $score += 1000 - 90;
+					
+				}
 				
 				return $score;
 			}
@@ -73,9 +82,10 @@
 		}
 		
 		public function setTitle( $str ) {
+			$str = trim($str);
 			$list = $this->doc->getElementsByTagName('title');
 			if ( $list->length === 1 ) {
-				$list->item(0)->nodeValue = trim($str);
+				$list->item(0)->nodeValue = htmlentities($str);
 			}
 		}
 		
@@ -179,6 +189,19 @@
 			}
 			
 			return $html;
+		}
+		
+		public function loadBody( $html ) {
+			
+			$frag = $this->doc->createDocumentFragment();
+			$frag->appendXML($html);
+
+			$body = $this->doc->getElementsByTagName('body');
+			if ( !empty($body) && 0 < $body->length ) {
+				$el = $body->item(0);
+				$el->appendChild($frag);
+			}
+		
 		}
 		
 		// build - render - generate - save - get - output - create
