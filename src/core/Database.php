@@ -3,7 +3,7 @@
 	/**
 	 * File: Database.php
 	 * Author: David@Refoua.me
-	 * Version: 0.6.4
+	 * Version: 0.6.5
 	 */
 	 
 	if ( basename($_SERVER['PHP_SELF']) == basename(__FILE__) ) {
@@ -279,6 +279,28 @@
 			$result  = $stmt->fetchAll( PDO::FETCH_ASSOC );
 			$count   = $stmt->rowCount();
 			return $result;
+		}
+		
+	}
+
+	function dbCount( $table, $filters = [], $limit = INF ) {
+		GLOBAL $db;
+		
+		$limit   = sanitizeInt   ( $limit );
+		$table   = sanitizeName  ( $table );
+		//$filters = sanitizeArray ( $filters );
+		
+		if ( ($db instanceof PDO) === true ) {
+			$fields  = '*'; // TODO: For now, everything. To be changed later.
+			//$where   = implode(' AND ', array_set("`*` = ?", array_keys($filters)));
+			$where   = buildWhere( $filters );
+			$sql     = ("SELECT COUNT($fields) FROM `$table` WHERE ($where) LIMIT $limit");
+			$stmt    = $db->prepare( formatSQL($sql) );
+			$success = $stmt->execute( array_values($filters) );
+			//$result  = $stmt->fetchAll( PDO::FETCH_ASSOC );
+			$column  = $stmt->fetchColumn();
+			$count   = $stmt->rowCount();
+			return $column;
 		}
 		
 	}
@@ -643,259 +665,606 @@
 		}
 	}
 
+	return;
+
+// --------------------------------------------------------------------------------------------------------------
+	//namespace libs\database;
+	//use \PDO;
+// --------------------------------------------------------------------------------------------------------------
+
+	class Connection {
+
+		protected $db;
+
+		public function __construct(){
+
+		$conn = NULL;
+
+			try{
+				$conn = new PDO("mysql:host=localhost;dbname=dbname", "dbuser", "dbpass");
+				$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+				} catch(PDOException $e){
+					echo 'ERROR: ' . $e->getMessage();
+					}    
+				$this->db = $conn;
+		}
+		
+		public function getConnection() {
+			return $this->db;
+		}
+		
+	}
 	
-return;
+	
+	class DB
+	{
+		protected static $instance = null;
 
-if ($_POST['go'] == "add") {
-	mysql_query("SET NAMES 'utf8'");
-	$add = mysql_query("INSERT INTO `bans` VALUES ('', '" . sanitize_text($_POST['ip']) . "' , '" . time() . "' ,'" . sanitize_text($_POST['reason']) . "','" . sanitize_text($_POST['redirect']) . "','" . sanitize_text($_POST['url']) . "' , '" . sanitize_text($_SESSION['name']) . "')");
-	$status = ($add ? '<div class="panel panel-success"><div class="panel-heading">محدوديت با موفقيت ثبت شد.</div></div>' : '<div class="panel panel-danger"><div class="panel-heading">مشکلي در ثبت محدوديت به وجود آمده است.</div></div>');
-}
-elseif ($_POST['go'] == "edit") {
-	mysql_query("SET NAMES 'utf8'");
-	$query = "UPDATE `bans` SET ";
-	$fields = array( 'ip', 'date', 'reason', 'redirect', 'url', 'bannedby' );
-	foreach($fields as $item) $query.= (isset($_POST[$item]) ? ("`$item` = '" . sanitize_text($_POST[$item]) . "', ") : "");
-	$query = rtrim($query, ' ,') . ' ';
-	$query.= "WHERE `id` = '" . sanitize($_POST['id']) . "' LIMIT 1";
-	$edit = mysql_query($query);
-	$status = ($edit ? '<div class="panel panel-warning"><div class="panel-heading">محدوديت با موفقيت ويرايش شد.</div></div>' : '<div class="panel panel-danger"><div class="panel-heading">مشکلي در ويرايش محدوديت به وجود آمده است.</div></div>');
+		protected function __construct() {}
+		protected function __clone() {}
 
-}
+		public static function instance()
+		{
+			if (self::$instance === null)
+			{
+				$opt  = array(
+					PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
+					PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+					PDO::ATTR_EMULATE_PREPARES   => FALSE,
+				);
+				$dsn = 'mysql:host='.DB_HOST.';dbname='.DB_NAME.';charset='.DB_CHAR;
+				self::$instance = new PDO($dsn, DB_USER, DB_PASS, $opt);
+			}
+			return self::$instance;
+		}
 
-if ( !empty($_GET['edit']) ) {
-	$row_bans = @array_pop(dbRead('bans', ['id' => sanitizeInt($_GET['edit']) ], 1));
-}
+		public static function __callStatic($method, $args)
+		{
+			return call_user_func_array(array(self::instance(), $method), $args);
+		}
 
+		public static function run($sql, $args = [])
+		{
+			$stmt = self::instance()->prepare($sql);
+			$stmt->execute($args);
+			return $stmt;
+		}
+	}
 
-class Connection{
+	 
+	/**
+	 * PHP MySQL BLOB Demo
+	 */
+	class DatabeOOP {
+	 
+		const DB_HOST = 'localhost';
+		const DB_NAME = 'classicmodels';
+		const DB_USER = 'root';
+		const DB_PASSWORD = '';
+	 
+		/**
+		 * Open the database connection
+		 */
+		public function __construct() {
+			// open database connection
+			$conStr = sprintf("mysql:host=%s;dbname=%s;charset=utf8", self::DB_HOST, self::DB_NAME);
+	 
+			try {
+				$this->pdo = new PDO($conStr, self::DB_USER, self::DB_PASSWORD);
+				//$conn->exec("set names utf8");
+			} catch (PDOException $e) {
+				echo $e->getMessage();
+			}
+		}
+	 
+		/**
+		 * close the database connection
+		 */
+		public function __destruct() {
+			// close the database connection
+			$this->pdo = null;
+		}
+		
+	   /**
+		 * insert blob into the files table
+		 * @param string $filePath
+		 * @param string $mime mimetype
+		 * @return bool
+		 */
+		public function insertBlob($filePath, $mime) {
+			$blob = fopen($filePath, 'rb');
+	 
+			$sql = "INSERT INTO files(mime,data) VALUES(:mime,:data)";
+			$stmt = $this->pdo->prepare($sql);
+	 
+			$stmt->bindParam(':mime', $mime);
+			$stmt->bindParam(':data', $blob, PDO::PARAM_LOB);
+	 
+			return $stmt->execute();
+		}
+		
+	   /**
+		 * update the files table with the new blob from the file specified
+		 * by the filepath
+		 * @param int $id
+		 * @param string $filePath
+		 * @param string $mime
+		 * @return bool
+		 */
+		function updateBlob($id, $filePath, $mime) {
+	 
+			$blob = fopen($filePath, 'rb');
+	 
+			$sql = "UPDATE files
+					SET mime = :mime,
+						data = :data
+					WHERE id = :id;";
+	 
+			$stmt = $this->pdo->prepare($sql);
+	 
+			$stmt->bindParam(':mime', $mime);
+			$stmt->bindParam(':data', $blob, PDO::PARAM_LOB);
+			$stmt->bindParam(':id', $id);
+	 
+			return $stmt->execute();
+		}
+		
+		/**
+		 * select data from the the files
+		 * @param int $id
+		 * @return array contains mime type and BLOB data
+		 */
+		public function selectBlob($id) {
+	 
+			$sql = "SELECT mime,
+						   data
+					  FROM files
+					 WHERE id = :id;";
+	 
+			$stmt = $this->pdo->prepare($sql);
+			$stmt->execute(array(":id" => $id));
+			$stmt->bindColumn(1, $mime);
+			$stmt->bindColumn(2, $data, PDO::PARAM_LOB);
+	 
+			$stmt->fetch(PDO::FETCH_BOUND);
+	 
+			return array("mime" => $mime,
+				"data" => $data);
+		}
+	 
+	}
 
-    protected $db;
+	class database_demo {
 
-    public function __construct(){
+		//connection info:
+		const db_name='mysite2';
+		const db_username='root';
+		const db_password='';
+		const db_host='localhost';
+		const PARAM_INT=PDO::PARAM_INT;
+		const PARAM_STR=PDO::PARAM_STR;
+		
+		//connection catch
+		public $connection=null;
+		//db error catch
+		public $db_error=null;
+		//db query result catch
+		public $db_result=null;
+		//db prepared statement
+		public $statement=null;
 
-    $conn = NULL;
+		//autoConnect to database
+		public function __construct(){
+			
+			try {
+				//connect to PDO mysql database
+				$dsn = "mysql:host=".self::db_host.';dbname='.self::db_name;
+				$this->connection = new PDO($dsn, self::db_username, self::db_password);
+				
+				if(empty($this->connection)){
+					//throw exception if cant connect
+					throw new Exception('database connection error');
+				}else{
+					//set error level
+					$this->connection->setAttribute(PDO::ATTR_ERRMODE,PDO::ERRMODE_EXCEPTION);
+					//set results encoding utf8
+					$this->connection->exec('set names utf8');
+				}
+			}
+			
+			catch(Exception $e) {
 
-        try{
-            $conn = new PDO("mysql:host=localhost;dbname=dbname", "dbuser", "dbpass");
-            $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-            } catch(PDOException $e){
-                echo 'ERROR: ' . $e->getMessage();
-                }    
-            $this->db = $conn;
-    }
-    
-    public function getConnection(){
-        return $this->db;
-    }
-}
+				//set error flag
+				$this->db_error=true;
+				//show errors
+				echo $e->getMessage();
+				
+			}
+		}
+		
+		//start a transaction
+		public function beginTransaction() {
+			$this->connection->beginTransaction();
+		}
+		
+		//commit transaction
+		public function commit() {
+			$this->connection->commit();
+		}
+		
+		//rollback transaction
+		public function rollback() {
+			$this->connection->rollBack();
+		}
+		
+		//count result rows
+		public function rowCount() {
+			return $this->statement->rowCount();
+		}
+		
+		//prepare statement
+		public function prepare($query) {
+			$this->statement=$this->connection->prepare($query);
+			return $this->statement;
+		}
 
- 
-/**
- * PHP MySQL BLOB Demo
- */
-class DatabeOOP {
- 
-    const DB_HOST = 'localhost';
-    const DB_NAME = 'classicmodels';
-    const DB_USER = 'root';
-    const DB_PASSWORD = '';
- 
+		//bind value
+		public function bindValue($var,$bind,$kind) {
+			$this->statement->bindValue($var,$bind,$kind);
+		}
+
+		public function runquery() {
+			//bind and run the query:
+			$this->db_result=$this->statement->execute();
+			return $this->db_result;
+		}
+
+		//prepare + run a query
+		public function query($query, $bind = null) {
+			
+			$this->prepare($query);
+			
+			if (!is_array($bind)) { 
+				//run a query without binding
+				$this->db_result=$this->statement->execute();
+				return $this->db_result;
+			} else { 
+				//bind and run the query:
+				$this->db_result=$this->statement->execute($bind);
+				return $this->db_result;
+			}
+			
+		}
+		
+		//fetch all rows:
+		public function fetchAll(){
+			return $this->statement->fetchAll(PDO::FETCH_ASSOC);
+		}
+
+		//last inserted id
+		public function lastInsertId(){
+			return $this->connection->lastInsertId();
+		}
+
+		//close db connection0
+		public function __destruct(){
+			//close database connection
+			$this->connection=null;
+			unset($this->connection);
+		}
+		
+	}
+	
+// --------------------------------------------------------------------------------------------------------------
+
+// --------------------------------------------------------------------------------------------------------------
+
+	if ($_POST['go'] == "add") {
+		mysql_query("SET NAMES 'utf8'");
+		$add = mysql_query("INSERT INTO `bans` VALUES ('', '" . sanitize_text($_POST['ip']) . "' , '" . time() . "' ,'" . sanitize_text($_POST['reason']) . "','" . sanitize_text($_POST['redirect']) . "','" . sanitize_text($_POST['url']) . "' , '" . sanitize_text($_SESSION['name']) . "')");
+		$status = ($add ? '<div class="panel panel-success"><div class="panel-heading">محدوديت با موفقيت ثبت شد.</div></div>' : '<div class="panel panel-danger"><div class="panel-heading">مشکلي در ثبت محدوديت به وجود آمده است.</div></div>');
+	}
+	elseif ($_POST['go'] == "edit") {
+		mysql_query("SET NAMES 'utf8'");
+		$query = "UPDATE `bans` SET ";
+		$fields = array( 'ip', 'date', 'reason', 'redirect', 'url', 'bannedby' );
+		foreach($fields as $item) $query.= (isset($_POST[$item]) ? ("`$item` = '" . sanitize_text($_POST[$item]) . "', ") : "");
+		$query = rtrim($query, ' ,') . ' ';
+		$query.= "WHERE `id` = '" . sanitize($_POST['id']) . "' LIMIT 1";
+		$edit = mysql_query($query);
+		$status = ($edit ? '<div class="panel panel-warning"><div class="panel-heading">محدوديت با موفقيت ويرايش شد.</div></div>' : '<div class="panel panel-danger"><div class="panel-heading">مشکلي در ويرايش محدوديت به وجود آمده است.</div></div>');
+
+	}
+
+	if ( !empty($_GET['edit']) ) {
+		$row_bans = @array_pop(dbRead('bans', ['id' => sanitizeInt($_GET['edit']) ], 1));
+	}
+
+// --------------------------------------------------------------------------------------------------------------
+
+// --------------------------------------------------------------------------------------------------------------
+
+	// blob example
+	$blobObj->insertBlob('images/php-mysql-blob.gif',"image/gif");
+	$blobObj->insertBlob('pdf/php-mysql-blob.pdf',"application/pdf");
+
+	$a = $blobObj->selectBlob(1);
+	header("Content-Type:" . $a['mime']);
+	echo $a['data']; exit;
+
+	$b = $blobObj->selectBlob(2);
+	header("Content-Type:" . $b['mime']);
+	echo $b['data']; exit;
+
+// --------------------------------------------------------------------------------------------------------------
+
+// --------------------------------------------------------------------------------------------------------------
+
+	# Table creation
+	DB::query("CREATE temporary TABLE pdowrapper (id int auto_increment primary key, name varchar(255))");
+
+	# Prepared statement multiple execution
+	$stmt = DB::prepare("INSERT INTO pdowrapper VALUES (NULL, ?)");
+	foreach (['Sam','Bob','Joe'] as $name)
+	{
+		$stmt->execute([$name]);
+	}
+	var_dump(DB::lastInsertId());
+	//string(1) "3"
+
+	# Getting rows in a loop
+	$stmt = DB::run("SELECT * FROM pdowrapper");
+	while ($row = $stmt->fetch(PDO::FETCH_LAZY))
+	{
+		echo $row['name'],",";
+		echo $row->name,",";
+		echo $row[1], PHP_EOL;
+	}
+	/*
+		Sam,Sam,Sam
+		Bob,Bob,Bob
+		Joe,Joe,Joe
+	*/
+
+	# Getting one row
+	$id  = 1;
+	$row = DB::run("SELECT * FROM pdowrapper WHERE id=?", [$id])->fetch();
+	var_export($row);
+	/*
+		array (
+		  'id' => '1',
+		  'name' => 'Sam',
+		)
+	*/
+
+	# Getting single field value
+	$name = DB::run("SELECT name FROM pdowrapper WHERE id=?", [$id])->fetchColumn();
+	var_dump($name);
+	//string(3) "Sam"
+
+	# Getting array of rows
+	$all = DB::run("SELECT name, id FROM pdowrapper")->fetchAll(PDO::FETCH_KEY_PAIR);
+	var_export($all);
+	/*
+		array (
+		  'Sam' => '1',
+		  'Bob' => '2',
+		  'Joe' => '3',
+		)
+	*/
+
+	# Update
+	$new = 'Sue';
+	$stmt = DB::run("UPDATE pdowrapper SET name=? WHERE id=?", [$new, $id]);
+	var_dump($stmt->rowCount());
+	//int(1)
+
+// --------------------------------------------------------------------------------------------------------------
+
+// --------------------------------------------------------------------------------------------------------------
+
+class Database extends PDO
+{
     /**
-     * Open the database connection
+     * @var array Array of saved databases for reusing
      */
-    public function __construct() {
-        // open database connection
-        $conStr = sprintf("mysql:host=%s;dbname=%s;charset=utf8", self::DB_HOST, self::DB_NAME);
- 
-        try {
-            $this->pdo = new PDO($conStr, self::DB_USER, self::DB_PASSWORD);
-            //$conn->exec("set names utf8");
-        } catch (PDOException $e) {
-            echo $e->getMessage();
+    protected static $instances = array();
+
+    /**
+     * Static method get
+     *
+     * @param  array $group
+     * @return \helpers\database
+     */
+    public static function get($group = false)
+    {
+        // Determining if exists or it's not empty, then use default group defined in config
+        $group = !$group ? array (
+            'type' => DB_TYPE,
+            'host' => DB_HOST,
+            'name' => DB_NAME,
+            'user' => DB_USER,
+            'pass' => DB_PASS
+        ) : $group;
+
+        // Group information
+        $type = $group['type'];
+        $host = $group['host'];
+        $name = $group['name'];
+        $user = $group['user'];
+        $pass = $group['pass'];
+
+        // ID for database based on the group information
+        $id = "$type.$host.$name.$user.$pass";
+
+        // Checking if the same
+        if (isset(self::$instances[$id])) {
+            return self::$instances[$id];
+        }
+
+        $instance = new Database("$type:host=$host;dbname=$name;charset=utf8", $user, $pass);
+        $instance->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+        // Setting Database into $instances to avoid duplication
+        self::$instances[$id] = $instance;
+
+        return $instance;
+
+    }
+
+    /**
+     * run raw sql queries
+     * @param  string $sql sql command
+     * @return none
+     */
+    public function raw($sql)
+    {
+        $this->query($sql);
+    }
+
+    /**
+     * method for selecting records from a database
+     * @param  string $sql       sql query
+     * @param  array  $array     named params
+     * @param  object $fetchMode
+     * @param  string $class     class name
+     * @return array            returns an array of records
+     */
+    public function select($sql, $array = array(), $fetchMode = PDO::FETCH_OBJ, $class = '')
+    {
+         // Append select if it isn't appended.
+        if (strtolower(substr($sql, 0, 7)) !== 'select ') {
+            $sql = "SELECT " . $sql;
+        }
+        
+        $stmt = $this->prepare($sql);
+        foreach ($array as $key => $value) {
+            if (is_int($value)) {
+                $stmt->bindValue("$key", $value, PDO::PARAM_INT);
+            } else {
+                $stmt->bindValue("$key", $value);
+            }
+        }
+
+        $stmt->execute();
+
+        if ($fetchMode === PDO::FETCH_CLASS) {
+            return $stmt->fetchAll($fetchMode, $class);
+        } else {
+            return $stmt->fetchAll($fetchMode);
         }
     }
- 
+
     /**
-     * close the database connection
+     * insert method
+     * @param  string $table table name
+     * @param  array $data  array of columns and values
      */
-    public function __destruct() {
-        // close the database connection
-        $this->pdo = null;
-    }
-	
-   /**
-     * insert blob into the files table
-     * @param string $filePath
-     * @param string $mime mimetype
-     * @return bool
-     */
-    public function insertBlob($filePath, $mime) {
-        $blob = fopen($filePath, 'rb');
- 
-        $sql = "INSERT INTO files(mime,data) VALUES(:mime,:data)";
-        $stmt = $this->pdo->prepare($sql);
- 
-        $stmt->bindParam(':mime', $mime);
-        $stmt->bindParam(':data', $blob, PDO::PARAM_LOB);
- 
-        return $stmt->execute();
-    }
-	
-   /**
-     * update the files table with the new blob from the file specified
-     * by the filepath
-     * @param int $id
-     * @param string $filePath
-     * @param string $mime
-     * @return bool
-     */
-    function updateBlob($id, $filePath, $mime) {
- 
-        $blob = fopen($filePath, 'rb');
- 
-        $sql = "UPDATE files
-                SET mime = :mime,
-                    data = :data
-                WHERE id = :id;";
- 
-        $stmt = $this->pdo->prepare($sql);
- 
-        $stmt->bindParam(':mime', $mime);
-        $stmt->bindParam(':data', $blob, PDO::PARAM_LOB);
-        $stmt->bindParam(':id', $id);
- 
-        return $stmt->execute();
-    }
-	
-    /**
-     * select data from the the files
-     * @param int $id
-     * @return array contains mime type and BLOB data
-     */
-    public function selectBlob($id) {
- 
-        $sql = "SELECT mime,
-                        data
-                   FROM files
-                  WHERE id = :id;";
- 
-        $stmt = $this->pdo->prepare($sql);
-        $stmt->execute(array(":id" => $id));
-        $stmt->bindColumn(1, $mime);
-        $stmt->bindColumn(2, $data, PDO::PARAM_LOB);
- 
-        $stmt->fetch(PDO::FETCH_BOUND);
- 
-        return array("mime" => $mime,
-            "data" => $data);
-    }
- 
-}
-
-// blob example
-$blobObj->insertBlob('images/php-mysql-blob.gif',"image/gif");
-$blobObj->insertBlob('pdf/php-mysql-blob.pdf',"application/pdf");
-
-$a = $blobObj->selectBlob(1);
-header("Content-Type:" . $a['mime']);
-echo $a['data']; exit;
-
-$b = $blobObj->selectBlob(2);
-header("Content-Type:" . $b['mime']);
-echo $b['data']; exit;
-
-
-class DB
-{
-    protected static $instance = null;
-
-    protected function __construct() {}
-    protected function __clone() {}
-
-    public static function instance()
+    public function insert($table, $data)
     {
-        if (self::$instance === null)
-        {
-            $opt  = array(
-                PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
-                PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-                PDO::ATTR_EMULATE_PREPARES   => FALSE,
-            );
-            $dsn = 'mysql:host='.DB_HOST.';dbname='.DB_NAME.';charset='.DB_CHAR;
-            self::$instance = new PDO($dsn, DB_USER, DB_PASS, $opt);
+        ksort($data);
+
+        $fieldNames = implode(',', array_keys($data));
+        $fieldValues = ':'.implode(', :', array_keys($data));
+
+        $stmt = $this->prepare("INSERT INTO $table ($fieldNames) VALUES ($fieldValues)");
+
+        foreach ($data as $key => $value) {
+            $stmt->bindValue(":$key", $value);
         }
-        return self::$instance;
+
+        $stmt->execute();
+        return $this->lastInsertId();
     }
 
-    public static function __callStatic($method, $args)
+    /**
+     * update method
+     * @param  string $table table name
+     * @param  array $data  array of columns and values
+     * @param  array $where array of columns and values
+     */
+    public function update($table, $data, $where)
     {
-        return call_user_func_array(array(self::instance(), $method), $args);
+        ksort($data);
+
+        $fieldDetails = null;
+        foreach ($data as $key => $value) {
+            $fieldDetails .= "$key = :$key,";
+        }
+        $fieldDetails = rtrim($fieldDetails, ',');
+
+        $whereDetails = null;
+        $i = 0;
+        foreach ($where as $key => $value) {
+            if ($i == 0) {
+                $whereDetails .= "$key = :$key";
+            } else {
+                $whereDetails .= " AND $key = :$key";
+            }
+            $i++;
+        }
+        $whereDetails = ltrim($whereDetails, ' AND ');
+
+        $stmt = $this->prepare("UPDATE $table SET $fieldDetails WHERE $whereDetails");
+
+        foreach ($data as $key => $value) {
+            $stmt->bindValue(":$key", $value);
+        }
+
+        foreach ($where as $key => $value) {
+            $stmt->bindValue(":$key", $value);
+        }
+
+        $stmt->execute();
+        return $stmt->rowCount();
     }
 
-    public static function run($sql, $args = [])
+    /**
+     * Delete method
+     * @param  string $table table name
+     * @param  array $data  array of columns and values
+     * @param  array $where array of columns and values
+     * @param  integer $limit limit number of records
+     */
+    public function delete($table, $where, $limit = 1)
     {
-        $stmt = self::instance()->prepare($sql);
-        $stmt->execute($args);
-        return $stmt;
+        ksort($where);
+
+        $whereDetails = null;
+        $i = 0;
+        foreach ($where as $key => $value) {
+            if ($i == 0) {
+                $whereDetails .= "$key = :$key";
+            } else {
+                $whereDetails .= " AND $key = :$key";
+            }
+            $i++;
+        }
+        $whereDetails = ltrim($whereDetails, ' AND ');
+
+        //if limit is a number use a limit on the query
+        if (is_numeric($limit)) {
+            $uselimit = "LIMIT $limit";
+        }
+
+        $stmt = $this->prepare("DELETE FROM $table WHERE $whereDetails $uselimit");
+
+        foreach ($where as $key => $value) {
+            $stmt->bindValue(":$key", $value);
+        }
+
+        $stmt->execute();
+        return $stmt->rowCount();
+    }
+
+    /**
+     * truncate table
+     * @param  string $table table name
+     */
+    public function truncate($table)
+    {
+        return $this->exec("TRUNCATE TABLE $table");
     }
 }
 
-# Table creation
-DB::query("CREATE temporary TABLE pdowrapper (id int auto_increment primary key, name varchar(255))");
-
-# Prepared statement multiple execution
-$stmt = DB::prepare("INSERT INTO pdowrapper VALUES (NULL, ?)");
-foreach (['Sam','Bob','Joe'] as $name)
-{
-    $stmt->execute([$name]);
-}
-var_dump(DB::lastInsertId());
-//string(1) "3"
-
-# Getting rows in a loop
-$stmt = DB::run("SELECT * FROM pdowrapper");
-while ($row = $stmt->fetch(PDO::FETCH_LAZY))
-{
-    echo $row['name'],",";
-    echo $row->name,",";
-    echo $row[1], PHP_EOL;
-}
-/*
-Sam,Sam,Sam
-Bob,Bob,Bob
-Joe,Joe,Joe
-*/
-
-# Getting one row
-$id  = 1;
-$row = DB::run("SELECT * FROM pdowrapper WHERE id=?", [$id])->fetch();
-var_export($row);
-/*
-array (
-  'id' => '1',
-  'name' => 'Sam',
-)
-*/
-
-# Getting single field value
-$name = DB::run("SELECT name FROM pdowrapper WHERE id=?", [$id])->fetchColumn();
-var_dump($name);
-//string(3) "Sam"
-
-# Getting array of rows
-$all = DB::run("SELECT name, id FROM pdowrapper")->fetchAll(PDO::FETCH_KEY_PAIR);
-var_export($all);
-/*
-array (
-  'Sam' => '1',
-  'Bob' => '2',
-  'Joe' => '3',
-)
-*/
-
-# Update
-$new = 'Sue';
-$stmt = DB::run("UPDATE pdowrapper SET name=? WHERE id=?", [$new, $id]);
-var_dump($stmt->rowCount());
-//int(1)
+// --------------------------------------------------------------------------------------------------------------
