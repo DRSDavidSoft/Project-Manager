@@ -3,7 +3,7 @@
 	/**
 	 * File: Database.php
 	 * Author: David@Refoua.me
-	 * Version: 0.6.5
+	 * Version: 0.6.6
 	 */
 	 
 	if ( basename($_SERVER['PHP_SELF']) == basename(__FILE__) ) {
@@ -141,6 +141,25 @@
 		return $sql;
 		
 	}
+
+	function prepareWhere( &$post, $filters, $prefix = '' ) {
+		
+		$values  = [];
+		$prefix  = sanitizeName  ( $prefix );
+
+		foreach( $filters as $key=>$value ) {
+			$opr = sanitizeOpr( preg_match( '@^.+\[([^\[\]]+)]$@iU', trim($key), $matches ) ? array_pop($matches) : '=' );
+			$key = sanitizeName( preg_replace( '@\[([^\[\]]+)]@iU', '', $key) );
+			
+			if ( is_string($value) ) { $values []= str_replace( '*', $key, "`*` $opr ?" ); $post []= $value; }
+			else foreach($value as $node) { $values []= str_replace( '*', $key, "`*` $opr ?" ); $post []= $node; }
+		}
+
+		$fields  = array_keys($filters);
+
+		return array($fields, $values);
+		
+	}
 	
 	function preparePost( &$post, $data, $prefix = '', $opr = '=' ) {
 		
@@ -209,6 +228,18 @@
 			$result  = $db->query( formatSQL($sql) );
 			return $result;
 		}
+	}
+
+	function dbSQL( $sql, $arguments = [] ) {
+		GLOBAL $db;
+
+		if ( ($db instanceof PDO) === true ) {
+			$stmt    = $db->prepare( formatSQL($sql) );
+			$success = $stmt->execute( $arguments );
+			$result  = $stmt->fetchAll( PDO::FETCH_ASSOC );
+			return $result;
+		}
+
 	}
 	
 	function dbMake( $table, $columns ) {
@@ -301,6 +332,26 @@
 			$column  = $stmt->fetchColumn();
 			$count   = $stmt->rowCount();
 			return $column;
+		}
+		
+	}
+
+	function dbFind( $table, $filters = [], $limit = INF ) {
+		GLOBAL $db;
+		
+		$limit   = sanitizeInt   ( $limit );
+		$table   = sanitizeName  ( $table );
+		//$filters = sanitizeArray ( $filters );
+		
+		if ( ($db instanceof PDO) === true ) {
+			$fields  = '*'; // TODO: For now, everything. To be changed later.
+			$where   = implode(' AND ', prepareWhere( $post, $filters )[1] );
+			$sql     = ("SELECT $fields FROM `$table` WHERE ($where) LIMIT $limit");
+			$stmt    = $db->prepare( formatSQL($sql) );
+			$success = $stmt->execute( $post );
+			$result  = $stmt->fetchAll( PDO::FETCH_ASSOC );
+			$count   = $stmt->rowCount();
+			return $result;
 		}
 		
 	}
