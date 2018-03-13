@@ -1,6 +1,8 @@
 
 # Project-Manager
 A web-based complete project management solution.<br />
+_(This project is still WORK in PROGRESS.)_
+
 Temp Demo: http://refoua.me/project-manager/page/list<br />
 Functional UI: http://refoua.me/project-manager/page/edit?id=27<br />
 
