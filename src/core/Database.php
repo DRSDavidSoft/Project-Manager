@@ -3,7 +3,7 @@
 	/**
 	 * File: Database.php
 	 * Author: David@Refoua.me
-	 * Version: 0.6.6
+	 * Version: 0.6.7
 	 */
 	 
 	if ( basename($_SERVER['PHP_SELF']) == basename(__FILE__) ) {
@@ -101,15 +101,24 @@
 	function formatSQL( $sql ) {
 		
 		global $db;
+
+		// Normalize line endings
+		$sql = preg_replace( '|[\r\n]+|', "\n", $sql );
 		
-		// First, trim any useless spaces
+		// Remove any singe line comment
+		//$sql = preg_replace( '~(?:\-{2}|\#{1})(?:[ \t]+[^\n]*)?$~iUm', '', $sql );
+
+		// Remove any multiple lines comment
+		//$sql = preg_replace( '|\/\*[\s\S]*\*\/|iU', '', $sql );
+
+		// Trim any useless spaces
 		$sql = trim( preg_replace( '|\s+|', ' ', $sql ) );
 		
 		// Replace any empty selection i.e. INSERT INTO `table_name` ()
 		$sql = preg_replace( '|(`\w+`)\s*\(\s*\)|iU', '$1', $sql );
 		
 		// Remove any empty clause i.e. WHERE()
-		$sql = preg_replace( '|\b\w+\b\s*\(\s*\)|iU', '', $sql );
+		$sql = preg_replace( '|\b[\w\s]+\b\s*\(\s*\)|iU', '', $sql );
 		
 		// If the LIMIT amount is set to INF, remove the clause
 		$sql = str_replace( 'LIMIT INF', '', $sql);
@@ -292,6 +301,29 @@
 	// SELECT * FROM Orders WHERE OrderDate >= '1980-01-01' ORDER BY OrderDate
 	
 	// For pagination, read example: http://www.xarg.org/2011/10/optimized-pagination-using-mysql/
+
+	function dbSort( $table, $filters = [], $order = [], $limit = INF ) {
+		GLOBAL $db;
+		
+		$limit   = sanitizeInt   ( $limit );
+		$table   = sanitizeName  ( $table );
+		$order   = sanitizeArray ( $order );
+		//$filters = sanitizeArray ( $filters );
+		
+		if ( ($db instanceof PDO) === true ) {
+			$fields  = '*'; // TODO: For now, everything. To be changed later.
+			//$where   = implode(' AND ', array_set("`*` = ?", array_keys($filters)));
+			$order   = implode( ', ', $order ); // TODO: change format to $order = [ 'col1[ASC]', 'col2[DESC]' ];
+			$where   = buildWhere( $filters );
+			$sql     = ("SELECT $fields FROM `$table` WHERE ($where) ORDER BY ($order) LIMIT $limit");
+			$stmt    = $db->prepare( formatSQL($sql) );
+			$success = $stmt->execute( array_values($filters) );
+			$result  = $stmt->fetchAll( PDO::FETCH_ASSOC );
+			$count   = $stmt->rowCount();
+			return $result;
+		}
+		
+	}
 	
 	function dbRead( $table, $filters = [], $limit = INF ) {
 		GLOBAL $db;
@@ -566,7 +598,7 @@
 		
 		$output = trim($input);
 		
-		// Changes any whitespace to underscore characters
+		// Change any whitespace to underscore characters
 		$output = preg_replace( '|\s+|', '_', $output );
 		
 		// Remove all non-alphanumeric and underscore characters
