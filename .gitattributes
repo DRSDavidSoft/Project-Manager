@@ -1,0 +1,31 @@
+# =========================
+# Project Manager Files
+# =========================
+
+# =========================
+
+# Auto detect text files and perform LF normalization
+* text=auto
+
+# =========================
+
+# Line ending for webpages
+*.html text eol=crlf
+*.htm text eol=crlf
+*.xml text eol=crlf
+*.config text eol=crlf
+*.scss text eol=crlf
+*.sass text eol=crlf
+*.css text eol=crlf
+*.js text eol=crlf
+
+# Line ending for php and apache
+.htaccess text eol=lf
+*.php text eol=lf
+
+# Line ending for sql files
+*.sql text eol=crlf
+
+# Line ending for pages
+*.md text eol=lf
+*.txt text eol=crlf
