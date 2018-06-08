@@ -1,5 +1,5 @@
 ::selection {
-	background: #39A0ED;
+	background: #00d1b2;
 	color: white; 
 }
 
@@ -9,25 +9,155 @@ body {
 }
 
 header.main {
-	background-color: #2980b9;
+	background-color: #00d1b2;
+	background-image: linear-gradient(141deg,#009e6c 0,#00d1b2 71%,#00e7eb 100%);
 	color: white;
 }
 
 header.main:before {
 	content: '';
-	/* background-image: url('../img/top-bg.png'); */
+	background-image: url('../img/header.jpg');
 	position: absolute;
 	display: block;
 	top: 0; left: 0;
 	width: 100%; height: 100%;
-	background-size: contain;
-	background-position: center bottom;
-	background-repeat: repeat-x;
-	opacity: .2;
+	background-size: cover;
+	background-position: center 20%;
+	background-repeat: no-repeat;
+	background-attachment: local;
+	transition: opacity 1s ease;
+	overflow: hidden;
+	filter: blur(1px);
+	opacity: .9;
+}
+
+header.main:hover:before {
+	opacity: 1;
 }
 
 header.main .site-title {
 	text-shadow: /*0 0 20px rgba(255,255,255, .8),*/ 0 1px rgba(0,0,0, .3);
+}
+
+header.main .btn {
+	border: 1px solid transparent;
+	transition: background-color .3s ease, color .3s ease, border-color .3s ease;
+	color: #fff;
+	vertical-align: middle;
+	display: inline-block;
+	position: relative;
+	outline: 0 !important;
+}
+
+header.main a.btn-default {
+	color: rgb(33, 133, 208);
+	font-weight: 600;
+	border-radius: 0;
+	padding: 12px 14px;
+	/* padding-bottom: 16px; */
+	font-size: 18px;
+	background-color: #fff;
+	outline: 0;
+}
+
+header.main a.btn-default.btn-border {
+	border-radius: 1px;
+	border-color: #fff;
+	background-color: transparent;
+	color: #fff
+}
+
+header.main a.btn-default.btn-transparent {
+	background-color: transparent;
+	color: #fff
+}
+
+header.main a.btn:active {
+	box-shadow: none;
+}
+
+header.main a.btn-default:hover {
+
+}
+
+header.main a.btn-default:active {
+	box-shadow: none;
+
+	background-color: rgb(33, 133, 208);
+	color: #fff;
+
+	outline: 0;
+}
+
+header.main a.btn-default .badge {
+	transition: background-color .3s ease, color .3s ease, border-color .3s ease;
+	background-color: rgb(33, 133, 208);
+	border: 1px solid transparent;
+	width: 26px; height: 26px;
+	line-height: 20px;
+	border-radius: 50%;
+	margin: 0 8px;
+}
+
+header.main a.btn-default.btn-border .badge {
+	background-color: #fff;
+	color: rgb(33, 133, 208);
+}
+
+header.main a.btn-default.btn-transparent .badge {
+	background-color: transparent;
+	color: #fff;
+	border: 1px solid #fff;
+}
+
+header.main a.btn-default:active .badge {
+	border-color: #fff;
+}
+
+.site-title, .site-title + .description, .navbar {
+	text-shadow: 0 1px rgba(0,0,0, .3);
+}
+
+header.main a.btn-danger {
+	background-color: #d9534f;
+	color: #fff;
+}
+
+header.main a.btn-danger:hover {
+	background-color: #c9302c;
+}
+
+header.main a.btn-danger.btn-border {
+	background: transparent;
+	border-color: #d9534f;
+	color: #d9534f;
+}
+
+header.main a.btn-danger.btn-border:hover {
+	background: transparent;
+	border-color: #c9302c;
+	color: #c9302c;
+}
+
+header.main a.btn-success {
+	background-color: #7ACB52;
+	color: #fff;
+}
+
+header.main a.btn-success:hover {
+	background-color: rgb(94, 201, 40);
+}
+
+header.main a.btn-success.btn-border {
+	background: transparent;
+	border-color: #7ACB52;
+	color: rgb(94, 201, 40);
+}
+
+header.main a.btn-success.btn-border:hover {
+	background: transparent;
+	border-color: rgb(94, 201, 40);
+	color: rgb(94, 201, 40);
 }
 
 .site-content {
@@ -54,3 +184,19 @@ button.main:focus, .btn-main:focus {
 	background: #e67e22;
 	color: #ecf0f1;
 }
+
+a, a:visited {
+	font-weight: bold;
+	display: inline-block;
+	color: #00d1b2;
+}
+
+a:hover, a:focus {
+	color: #00e7eb;
+	text-decoration: none;
+}
+
+a:active {
+	color: #009e6c;
+}
+
