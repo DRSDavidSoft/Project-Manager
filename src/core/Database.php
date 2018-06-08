@@ -315,7 +315,7 @@
 			//$where   = implode(' AND ', array_set("`*` = ?", array_keys($filters)));
 			$order   = implode( ', ', $order ); // TODO: change format to $order = [ 'col1[ASC]', 'col2[DESC]' ];
 			$where   = buildWhere( $filters );
-			$sql     = ("SELECT $fields FROM `$table` WHERE ($where) ORDER BY ($order) LIMIT $limit");
+			$sql     = ("SELECT $fields FROM `$table` WHERE ($where) ORDER BY $order LIMIT $limit");
 			$stmt    = $db->prepare( formatSQL($sql) );
 			$success = $stmt->execute( array_values($filters) );
 			$result  = $stmt->fetchAll( PDO::FETCH_ASSOC );
