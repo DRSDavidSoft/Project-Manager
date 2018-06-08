@@ -13,7 +13,7 @@
 	# Make a MySQL Database connection
 	$db = dbInit( "mysql:host=localhost;port=3306;charset=utf8", null, 'main', 'letmein' ); // DSN, leave null, username, password
 	dbSelect( $db, 'todo_manager', true ); // Database Name
-	
+
 	$modules = [
 		'test' => function($args) {
 				global $parameters, $work_space;
