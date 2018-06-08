@@ -116,11 +116,11 @@
 	
 	
 	$task = @array_pop( dbRead( 'tasks',
-		[ 'id' => intval( @$_REQUEST['id'] ) ]
+		[ 'id' => intval( @$parameters['id'] ) ]
 	) );
 	
 	if ( empty($task) ) {
-		if ( !empty( $_REQUEST['id'] ) ) {
+		if ( !empty( $parameters['id'] ) ) {
 			$alert = $msgs['notfound'];
 		}
 	}
@@ -391,6 +391,7 @@
 								}
 								
 								.rangeslider {
+									direction: ltr;
 									background-color: white;
 									-webkit-box-shadow: inset 0 1px 0 rgba(0,0,0, 0.2);
 									box-shadow: inset 0 1px 0 rgba(0,0,0, 0.2);
